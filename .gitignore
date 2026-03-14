@@ -1,0 +1,11 @@
+node_modules/
+.DS_Store
+temporary screenshots/
+fix/
+.claude/
+
+# Temp screenshot scripts
+snap-*.mjs
+temp-*.mjs
+screenshot-config*.mjs
+screenshot-section.mjs
