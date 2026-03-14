@@ -285,11 +285,14 @@
     }
 
     /* Announcement bar */
+    @keyframes marquee {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
     .announcement {
       background: linear-gradient(135deg, #A07828 0%, #C9983C 50%, #A07828 100%);
       color: #0E0E12;
-      text-align: center;
-      padding: 8px 48px;
+      padding: 8px 0;
       font-family: 'DM Sans', sans-serif;
       font-size: 0.7rem;
       font-weight: 700;
@@ -298,6 +301,10 @@
       overflow: hidden;
       max-height: 40px;
       transition: max-height 0.35s ease, opacity 0.35s ease, padding 0.35s ease;
+    }
+    .announcement-track {
+      display: inline-flex;
+      animation: marquee 22s linear infinite;
     }
 
     .site-header.scrolled .announcement {
@@ -503,7 +510,10 @@
 
   <!-- Announcement Bar -->
   <div class="announcement">
-    ✦ FREE SHIPPING &nbsp;·&nbsp; SATISFACTION GUARANTEED &nbsp;·&nbsp; UNLIMITED REVISIONS ✦
+    <div class="announcement-track" aria-hidden="true">
+      <span>FREE SHIPPING &nbsp;·&nbsp; SATISFACTION GUARANTEED &nbsp;·&nbsp; UNLIMITED REVISIONS &nbsp;·&nbsp; FREE SHIPPING &nbsp;·&nbsp; SATISFACTION GUARANTEED &nbsp;·&nbsp; UNLIMITED REVISIONS &nbsp;·&nbsp; </span>
+      <span>FREE SHIPPING &nbsp;·&nbsp; SATISFACTION GUARANTEED &nbsp;·&nbsp; UNLIMITED REVISIONS &nbsp;·&nbsp; FREE SHIPPING &nbsp;·&nbsp; SATISFACTION GUARANTEED &nbsp;·&nbsp; UNLIMITED REVISIONS &nbsp;·&nbsp; </span>
+    </div>
   </div>
 
   <!-- Navigation -->
@@ -543,26 +553,23 @@
   <!-- ═══════════════════════════════════════════════════ -->
   <!-- HERO SECTION -->
   <!-- ═══════════════════════════════════════════════════ -->
-  <section class="bg-hero" style="min-height:105svh; display:flex; flex-direction:column; justify-content:flex-end; text-align:center; position:relative; overflow:hidden;">
+  <section class="bg-hero" style="min-height:120svh; display:flex; flex-direction:column; justify-content:flex-end; text-align:center; position:relative; overflow:hidden;">
 
     <!-- Full-bleed hero image — already contains title/copy -->
     <div style="position:absolute; inset:0; z-index:0;">
       <img src="Assets/hf_20260311_130322_9acc0d6e-934a-4c82-8b56-b4490767e27c.png" alt="Your Pet's Ambition Reimagined — Pawtrait Co cinematic portrait" loading="eager" style="width:100%; height:100%; object-fit:cover; object-position:center top;" />
       <!-- Top gradient — nav legibility -->
       <div style="position:absolute; inset:0; background:linear-gradient(to bottom, rgba(10,10,13,0.55) 0%, transparent 28%); pointer-events:none;"></div>
-      <!-- Bottom gradient — CTA legibility -->
-      <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(10,10,13,1) 0%, rgba(10,10,13,0.85) 20%, rgba(10,10,13,0.4) 45%, transparent 65%); pointer-events:none;"></div>
+      <!-- Bottom gradient — CTA legibility, starts lower to expose more image -->
+      <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(10,10,13,1) 0%, rgba(10,10,13,0.85) 16%, rgba(10,10,13,0.3) 36%, transparent 55%); pointer-events:none;"></div>
     </div>
 
-    <!-- CTA block anchored to bottom -->
+    <!-- CTA block anchored to bottom — single CTA only -->
     <div style="position:relative; z-index:2; padding:0 24px 56px; max-width:480px; margin:0 auto; width:100%;">
       <div style="display:flex; flex-direction:column; gap:14px; align-items:center; margin-bottom:32px;">
         <a href="#upload" class="btn-primary" style="font-size:0.9rem; padding:16px 36px; white-space:nowrap;">
           <span>Create Your Poster — $39</span>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-        <a href="#gallery" class="btn-secondary" style="white-space:nowrap;">
-          <span>View the Gallery</span>
         </a>
       </div>
 
@@ -593,7 +600,7 @@
           Real pets. Real <em style="color:#C9983C;">portraits.</em>
         </h2>
         <p style="font-family:'DM Sans',sans-serif; font-size:0.9rem; color:rgba(245,242,236,0.65); line-height:1.65; max-width:400px; margin:0 auto;">
-          Each portrait is made from your photo — your pet's face, their personality, their story.
+          Each poster is built from your photo — your pet's face, their personality, their moment.
         </p>
       </div>
 
@@ -737,7 +744,7 @@
           </div>
           <h3 style="font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:600; color:#F5F2EC; margin:0 0 12px; line-height:1.3;">We Create Your Heist Portrait</h3>
           <p style="font-family:'DM Sans',sans-serif; font-size:0.9rem; color:rgba(245,242,236,0.88); line-height:1.75; margin:0;">
-            Your pet is transformed into a cinematic movie star in our signature Heist style — then choose framed or canvas print delivery.
+            Your pet is transformed into a cinematic movie star in our signature Heist style.
           </p>
         </div>
 
@@ -896,7 +903,7 @@
         </div>
         <div style="display:flex; align-items:center; gap:6px;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          <span style="font-family:'DM Sans',sans-serif; font-size:0.78rem; color:rgba(245,242,236,0.6);">Delivered in 3 business days</span>
+          <span style="font-family:'DM Sans',sans-serif; font-size:0.78rem; color:rgba(245,242,236,0.6);">Digital proof within 3 business days</span>
         </div>
       </div>
 
@@ -947,7 +954,7 @@
         <div class="badge" style="margin-bottom:20px;">Completely Optional</div>
         <h2 style="font-family:'Playfair Display',serif; font-size:clamp(1.8rem,5vw,2.6rem); font-weight:600; color:#F5F2EC; letter-spacing:-0.02em; line-height:1.2; margin:0 0 12px;">Want it on your wall?</h2>
         <div class="divider-gold" style="margin-bottom:16px;"></div>
-        <p style="font-family:'DM Sans',sans-serif; font-size:0.9rem; color:rgba(245,242,236,0.6); line-height:1.65; margin:0;">Your digital is yours either way — prints ship with <strong style="color:#C9983C;">$39 off</strong> for digital buyers.</p>
+        <p style="font-family:'DM Sans',sans-serif; font-size:0.9rem; color:rgba(245,242,236,0.6); line-height:1.65; margin:0;">Your $39 digital purchase earns you a <strong style="color:#C9983C;">$39 credit</strong> toward any print.</p>
       </div>
 
       <!-- Tab switcher -->
@@ -1024,6 +1031,8 @@
           <span style="font-family:'DM Sans',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.06em; color:rgba(245,242,236,0.3); text-transform:uppercase;">Pay with</span>
           <img src="Assets/Afterpay_Mint_Logo.jpg" alt="Afterpay" style="height:22px; border-radius:5px; opacity:0.9;" />
           <img src="Assets/logo-dark.svg" alt="Zip" style="height:20px; filter:brightness(0) invert(1); opacity:0.6;" />
+          <!-- PayPal -->
+          <img src="Assets/PayPal-Logo.wine.png" alt="PayPal" style="height:22px; border-radius:5px; opacity:0.85;" />
           <!-- Visa -->
           <img src="Assets/Visa-Logo.png" alt="Visa" style="height:22px; border-radius:5px;" />
           <!-- Mastercard -->
@@ -1092,12 +1101,12 @@
 
         <details class="card-base" style="padding:0; overflow:hidden; border-radius:12px; margin-bottom:8px;">
           <summary style="padding:20px 24px; display:flex; justify-content:space-between; align-items:center; gap:16px; cursor:pointer;">
-            <span style="font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:500; color:#F5F2EC; line-height:1.4;">What animals do you paint?</span>
+            <span style="font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:500; color:#F5F2EC; line-height:1.4;">Which pets can you create a poster for?</span>
             <span class="faq-icon" style="color:#C9983C; font-size:1.2rem; flex-shrink:0; font-weight:300;">+</span>
           </summary>
           <div style="padding:0 24px 20px; border-top:1px solid rgba(201,152,60,0.08);">
             <p style="font-family:'DM Sans',sans-serif; font-size:0.88rem; color:rgba(245,242,236,0.88); line-height:1.75; margin:16px 0 0;">
-              All of them! Dogs, cats, rabbits, horses, birds, reptiles — if it's yours and you love it, we'll paint it with the reverence it deserves.
+              All of them! Dogs, cats, rabbits, horses, birds, reptiles — if it's yours and you love it, we'll create a poster with the reverence it deserves.
             </p>
           </div>
         </details>
@@ -1134,9 +1143,12 @@
           <span style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:0.1em; color:#F5F2EC; display:block; margin-bottom:12px;">PAWTRAIT CO</span>
           <p style="font-family:'Playfair Display',serif; font-style:italic; font-size:0.9rem; color:rgba(245,242,236,0.7); line-height:1.6; margin:0 0 20px;">Your Pet's Ambition, Reimagined.</p>
           <div style="display:flex; gap:12px;">
-            <a href="#" style="width:36px; height:36px; border-radius:8px; background:rgba(201,152,60,0.1); border:1px solid rgba(201,152,60,0.2); display:flex; align-items:center; justify-content:center; color:rgba(245,242,236,0.88); text-decoration:none; font-size:0.85rem; transition:background 0.2s ease, color 0.2s ease;" onmouseover="this.style.background='rgba(201,152,60,0.2)'; this.style.color='#C9983C'" onmouseout="this.style.background='rgba(201,152,60,0.1)'; this.style.color='rgba(245,242,236,0.6)'" aria-label="Instagram">IG</a>
-            <a href="#" style="width:36px; height:36px; border-radius:8px; background:rgba(201,152,60,0.1); border:1px solid rgba(201,152,60,0.2); display:flex; align-items:center; justify-content:center; color:rgba(245,242,236,0.88); text-decoration:none; font-size:0.85rem; transition:background 0.2s ease, color 0.2s ease;" onmouseover="this.style.background='rgba(201,152,60,0.2)'; this.style.color='#C9983C'" onmouseout="this.style.background='rgba(201,152,60,0.1)'; this.style.color='rgba(245,242,236,0.6)'" aria-label="TikTok">TK</a>
-            <a href="#" style="width:36px; height:36px; border-radius:8px; background:rgba(201,152,60,0.1); border:1px solid rgba(201,152,60,0.2); display:flex; align-items:center; justify-content:center; color:rgba(245,242,236,0.88); text-decoration:none; font-size:0.85rem; transition:background 0.2s ease, color 0.2s ease;" onmouseover="this.style.background='rgba(201,152,60,0.2)'; this.style.color='#C9983C'" onmouseout="this.style.background='rgba(201,152,60,0.1)'; this.style.color='rgba(245,242,236,0.6)'" aria-label="Pinterest">PT</a>
+            <a href="https://www.instagram.com/pawtraitco" target="_blank" rel="noopener" style="width:36px; height:36px; border-radius:8px; background:rgba(201,152,60,0.1); border:1px solid rgba(201,152,60,0.2); display:flex; align-items:center; justify-content:center; text-decoration:none; overflow:hidden; transition:background 0.2s ease;" onmouseover="this.style.background='rgba(201,152,60,0.2)'" onmouseout="this.style.background='rgba(201,152,60,0.1)'" aria-label="Instagram">
+              <img src="Assets/Instagram_logo_2016.svg.webp" alt="Instagram" style="width:20px; height:20px; object-fit:contain;" />
+            </a>
+            <a href="https://www.tiktok.com/@pawtraitco" target="_blank" rel="noopener" style="width:36px; height:36px; border-radius:8px; background:rgba(201,152,60,0.1); border:1px solid rgba(201,152,60,0.2); display:flex; align-items:center; justify-content:center; text-decoration:none; overflow:hidden; transition:background 0.2s ease;" onmouseover="this.style.background='rgba(201,152,60,0.2)'" onmouseout="this.style.background='rgba(201,152,60,0.1)'" aria-label="TikTok">
+              <img src="Assets/Tiktok_Logo.png" alt="TikTok" style="width:20px; height:20px; object-fit:contain;" />
+            </a>
           </div>
         </div>
 
@@ -1180,6 +1192,7 @@
     const siteHeader = document.getElementById('site-header');
     const stickyBar = document.getElementById('sticky-bar');
     const orderSummaryEl = document.getElementById('order-summary');
+    const heroEl = document.querySelector('section.bg-hero');
 
     window.addEventListener('scroll', () => {
       if (window.scrollY > 60) {
@@ -1189,11 +1202,13 @@
         navbar.classList.remove('scrolled');
         if (siteHeader) siteHeader.classList.remove('scrolled');
       }
-      // Hide sticky bar when order summary is visible to avoid competing CTAs
-      if (stickyBar && orderSummaryEl) {
-        const rect = orderSummaryEl.getBoundingClientRect();
-        const inView = rect.top < window.innerHeight && rect.bottom > 0;
-        stickyBar.style.transform = inView ? 'translateY(100%)' : 'translateY(0)';
+      // Fade sticky bar in once user starts scrolling; hide when order summary is visible
+      if (stickyBar) {
+        const hasScrolled = window.scrollY > 80;
+        const orderInView = orderSummaryEl ? (orderSummaryEl.getBoundingClientRect().top < window.innerHeight && orderSummaryEl.getBoundingClientRect().bottom > 0) : false;
+        const visible = hasScrolled && !orderInView;
+        stickyBar.style.opacity = visible ? '1' : '0';
+        stickyBar.style.pointerEvents = visible ? 'auto' : 'none';
       }
     }, { passive: true });
 
@@ -1368,17 +1383,17 @@
     let selectedPrint = null; // { type, size, listedPrice, youPay }
 
     const UPSELL_FRAMED = [
-      { size:'20×30 cm', listed:119, youPay:69 },
-      { size:'30×45 cm', listed:159, youPay:109 },
-      { size:'45×60 cm', listed:209, youPay:159, badge:'Most Popular' },
-      { size:'50×70 cm', listed:249, youPay:199, badge:'Best Value' },
-      { size:'60×90 cm', listed:329, youPay:279 },
+      { size:'20×30 cm', listed:108, youPay:69 },
+      { size:'30×45 cm', listed:148, youPay:109 },
+      { size:'45×60 cm', listed:198, youPay:159, badge:'Most Popular' },
+      { size:'50×70 cm', listed:238, youPay:199, badge:'Best Value' },
+      { size:'60×90 cm', listed:318, youPay:279 },
     ];
     const UPSELL_CANVAS = [
-      { size:'20×30 cm', listed:109, youPay:59 },
-      { size:'45×60 cm', listed:169, youPay:119, badge:'Most Popular' },
-      { size:'50×70 cm', listed:229, youPay:179, badge:'Best Value' },
-      { size:'60×90 cm', listed:299, youPay:249 },
+      { size:'20×30 cm', listed:98, youPay:59 },
+      { size:'45×60 cm', listed:158, youPay:119, badge:'Most Popular' },
+      { size:'50×70 cm', listed:218, youPay:179, badge:'Best Value' },
+      { size:'60×90 cm', listed:288, youPay:249 },
     ];
 
     function renderUpsellRows(type) {
@@ -1551,7 +1566,7 @@
   </script>
 
   <!-- Sticky mobile bottom bar -->
-  <div id="sticky-bar" style="position:fixed; bottom:0; left:0; right:0; z-index:200; background:linear-gradient(135deg,#A07828,#C9983C,#A07828); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 -4px 24px rgba(0,0,0,0.4); transition:transform 0.3s ease;" class="md:hidden">
+  <div id="sticky-bar" style="position:fixed; bottom:0; left:0; right:0; z-index:200; background:linear-gradient(135deg,#A07828,#C9983C,#A07828); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 -4px 24px rgba(0,0,0,0.4); transition:opacity 0.4s ease; opacity:0; pointer-events:none;" class="md:hidden">
     <div>
       <p style="font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:0.06em; color:#0E0E12; margin:0; line-height:1;">Create Your Poster</p>
       <p style="font-family:'DM Sans',sans-serif; font-size:0.72rem; color:rgba(14,14,18,0.7); margin:0;">From $39 · Free shipping</p>
