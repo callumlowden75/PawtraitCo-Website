@@ -5,6 +5,22 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+// ── Handle add-to-cart form POST (no API, no nonce, just server-side cart) ──
+if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['pawtrait_checkout'] ) ) {
+    if ( function_exists( 'WC' ) && WC()->cart ) {
+        WC()->cart->empty_cart();
+        // Always add the digital file
+        WC()->cart->add_to_cart( 4479 );
+        // Add print variation if one was selected
+        $print_id = isset( $_POST['print_variation_id'] ) ? intval( $_POST['print_variation_id'] ) : 0;
+        if ( $print_id > 0 ) {
+            WC()->cart->add_to_cart( $print_id );
+        }
+        wp_safe_redirect( wc_get_checkout_url() );
+        exit;
+    }
+}
+
 // Dequeue theme styles so they don't conflict with our inline styles
 add_action( 'wp_enqueue_scripts', function() {
     global $wp_styles;
@@ -1599,7 +1615,7 @@ add_action( 'wp_enqueue_scripts', function() {
       updateOrderSummary();
     }
 
-    async function addToCartAndCheckout() {
+    function addToCartAndCheckout() {
       if (!uploadedFile) {
         document.getElementById('upload').scrollIntoView({ behavior: 'smooth' });
         return;
@@ -1607,50 +1623,31 @@ add_action( 'wp_enqueue_scripts', function() {
 
       // Button loading state
       const btn = document.querySelector('[onclick="addToCartAndCheckout()"]');
-      const originalHTML = btn ? btn.innerHTML : '';
-      if (btn) { btn.disabled = true; btn.innerHTML = 'Adding to cart…'; }
+      if (btn) { btn.disabled = true; btn.innerHTML = 'Redirecting to checkout…'; }
 
-      try {
-        // 1. Always add the digital file
-        await wooAddToCart(WOO_DIGITAL_ID);
+      // Build a hidden form and POST to this same page.
+      // PHP handler at the top of the template adds items to WooCommerce cart
+      // and redirects to /checkout — no API, no nonces, no fetch.
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = window.location.href;
 
-        // 2. Add print variation if selected
-        if (selectedPrint) {
-          const varMap = selectedPrint.type === 'framed' ? WOO_FRAMED_VARIATION_IDS : WOO_CANVAS_VARIATION_IDS;
-          const variationId = varMap[selectedPrint.size];
-          if (variationId) await wooAddToCart(variationId);
+      const flag = document.createElement('input');
+      flag.type = 'hidden'; flag.name = 'pawtrait_checkout'; flag.value = '1';
+      form.appendChild(flag);
+
+      if (selectedPrint) {
+        const varMap = selectedPrint.type === 'framed' ? WOO_FRAMED_VARIATION_IDS : WOO_CANVAS_VARIATION_IDS;
+        const variationId = varMap[selectedPrint.size];
+        if (variationId) {
+          const printInput = document.createElement('input');
+          printInput.type = 'hidden'; printInput.name = 'print_variation_id'; printInput.value = variationId;
+          form.appendChild(printInput);
         }
-
-        // 3. Redirect to checkout
-        window.location.href = WOO_BASE_URL + '/checkout';
-
-      } catch (err) {
-        console.error('WooCommerce cart error:', err);
-        if (btn) { btn.disabled = false; btn.innerHTML = originalHTML; }
-        const toast = document.getElementById('cart-toast');
-        toast.textContent = 'Something went wrong — please try again.';
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 4000);
       }
-    }
 
-    async function wooAddToCart(productId) {
-      // Nonce injected by PHP (wp_create_nonce) — see <head>
-      const nonce = window.wcStoreApiNonce || window.wcSettings?.storeApiNonce || '';
-      const resp = await fetch(WOO_BASE_URL + '/wp-json/wc/store/v1/cart/add-item', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Nonce': nonce,
-        },
-        credentials: 'include',
-        body: JSON.stringify({ id: productId, quantity: 1 }),
-      });
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({}));
-        throw new Error(err.message || `Store API error ${resp.status} on item ${productId}`);
-      }
-      return resp.json();
+      document.body.appendChild(form);
+      form.submit();
     }
   </script>
 
