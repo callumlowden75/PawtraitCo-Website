@@ -5,6 +5,9 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+// Tell LiteSpeed not to cache this page (nonce + cart state are per-visitor)
+do_action( 'litespeed_control_set_nocache', 'pawtrait landing page' );
+
 // ── Handle add-to-cart form POST (no API, no nonce, just server-side cart) ──
 if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['pawtrait_checkout'] ) ) {
     if ( function_exists( 'WC' ) && WC()->cart ) {
