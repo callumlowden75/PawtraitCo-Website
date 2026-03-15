@@ -260,6 +260,21 @@ add_action( 'wp_head', function() {
     <?php
 }, 99 );
 
+// Show was/now sale pricing in checkout order review
+add_filter( 'woocommerce_cart_item_subtotal', function( $subtotal, $cart_item, $cart_item_key ) {
+    $product = $cart_item['data'];
+    $regular = (float) $product->get_regular_price();
+    $sale    = (float) $product->get_sale_price();
+    $qty     = $cart_item['quantity'];
+
+    if ( $sale && $regular > $sale ) {
+        $saved = ( $regular - $sale ) * $qty;
+        return '<del>' . wc_price( $regular * $qty ) . '</del> <ins>' . wc_price( $sale * $qty ) . '</ins>'
+             . '<br><span style="font-size:0.75rem;color:#C9983C;font-weight:600;">You save ' . wc_price( $saved ) . '</span>';
+    }
+    return $subtotal;
+}, 10, 3 );
+
 // Trust bar below Place Order — uses page check instead of is_checkout
 add_action( 'woocommerce_review_order_after_submit', function() {
     echo '<p class="pawtrait-trust-bar">
