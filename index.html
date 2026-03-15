@@ -710,7 +710,7 @@
   <!-- ═══════════════════════════════════════════════════ -->
   <!-- HOW IT WORKS SECTION -->
   <!-- ═══════════════════════════════════════════════════ -->
-  <section id="how-it-works" style="padding:64px 24px; background:#2C1A0A; border-top:1px solid rgba(201,152,60,0.16);">
+  <section id="how-it-works" style="padding:64px 24px; background:#160C03; border-top:1px solid rgba(201,152,60,0.16);">
     <div style="max-width:1000px; margin:0 auto;">
 
       <div class="reveal" style="text-align:center; margin-bottom:48px;">
@@ -1005,7 +1005,10 @@
             <div style="width:8px; height:8px; border-radius:50%; background:#C9983C; flex-shrink:0;"></div>
             <span id="order-print-name" style="font-family:'DM Sans',sans-serif; font-size:0.9rem; color:#F5F2EC;">Print</span>
           </div>
-          <span id="order-print-price" style="font-family:'Bebas Neue',sans-serif; font-size:1.2rem; color:#F5F2EC; letter-spacing:0.04em;">$69</span>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span id="order-print-price" style="font-family:'Bebas Neue',sans-serif; font-size:1.2rem; color:#F5F2EC; letter-spacing:0.04em;">$69</span>
+            <button onclick="removePrint()" style="font-family:'DM Sans',sans-serif; font-size:0.72rem; color:rgba(245,242,236,0.35); background:none; border:none; border-bottom:1px solid rgba(245,242,236,0.2); cursor:pointer; padding:0 0 1px; line-height:1; transition:color 0.2s ease, border-color 0.2s ease;" onmouseover="this.style.color='rgba(245,242,236,0.6)'; this.style.borderColor='rgba(245,242,236,0.4)'" onmouseout="this.style.color='rgba(245,242,236,0.35)'; this.style.borderColor='rgba(245,242,236,0.2)'" aria-label="Remove print from order">Remove</button>
+          </div>
         </div>
         <!-- Total -->
         <div style="display:flex; align-items:center; justify-content:space-between;">
@@ -1020,10 +1023,10 @@
       <div class="reveal">
         <!-- Micro social proof -->
         <p style="font-family:'DM Sans',sans-serif; font-size:0.75rem; color:rgba(245,242,236,0.45); text-align:center; margin:0 0 12px; line-height:1.5;">
-          <span class="stars" style="font-size:0.65rem; margin-right:4px;">★★★★★</span> Joined by 500+ pet owners this month
+          <span class="stars" style="font-size:0.65rem; margin-right:4px;">★★★★★</span> Join 100's of happy pet owners and get yours today!
         </p>
         <button class="btn-primary" onclick="addToCartAndCheckout()" style="width:100%; justify-content:center; font-size:1rem; padding:18px 24px; border-radius:14px;">
-          GET MY PORTRAIT
+          GET MY PORTRAIT <span id="checkout-btn-price" style="opacity:0.75;">· $39</span>
         </button>
 
         <!-- Payment logos row -->
@@ -1052,7 +1055,7 @@
   <!-- ═══════════════════════════════════════════════════ -->
   <!-- FAQ SECTION -->
   <!-- ═══════════════════════════════════════════════════ -->
-  <section class="bg-section-dark" style="padding:64px 24px;">
+  <section class="bg-section-mid" style="padding:64px 24px;">
     <div style="max-width:640px; margin:0 auto;">
 
       <div class="reveal" style="text-align:center; margin-bottom:40px;">
@@ -1480,16 +1483,27 @@
       const printName = document.getElementById('order-print-name');
       const printPrice = document.getElementById('order-print-price');
       const total = document.getElementById('order-total');
+      const btnPrice = document.getElementById('checkout-btn-price');
       if (selectedPrint) {
         const typeName = selectedPrint.type === 'framed' ? 'Framed Print' : 'Canvas Print';
         printName.textContent = typeName + ' · ' + selectedPrint.size;
         printPrice.textContent = '$' + selectedPrint.youPay;
         printLine.style.display = 'flex';
-        total.textContent = '$' + (39 + selectedPrint.youPay);
+        const totalAmt = 39 + selectedPrint.youPay;
+        total.textContent = '$' + totalAmt;
+        if (btnPrice) btnPrice.textContent = '· $' + totalAmt;
       } else {
         printLine.style.display = 'none';
         total.textContent = '$39';
+        if (btnPrice) btnPrice.textContent = '· $39';
       }
+    }
+
+    function removePrint() {
+      selectedPrint = null;
+      updateOrderSummary();
+      renderUpsellRows('framed');
+      renderUpsellRows('canvas');
     }
 
     function skipPrint(e) {
