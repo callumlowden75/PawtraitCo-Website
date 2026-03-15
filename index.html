@@ -1580,58 +1580,25 @@
       updateOrderSummary();
     }
 
-    async function addToCartAndCheckout() {
+    function addToCartAndCheckout() {
       if (!uploadedFile) {
         document.getElementById('upload').scrollIntoView({ behavior: 'smooth' });
         return;
       }
 
-      // Button loading state
       const btn = document.querySelector('[onclick="addToCartAndCheckout()"]');
-      const originalHTML = btn ? btn.innerHTML : '';
-      if (btn) { btn.disabled = true; btn.innerHTML = 'Adding to cart…'; }
+      if (btn) { btn.disabled = true; btn.innerHTML = 'Redirecting to checkout…'; }
 
-      try {
-        // 1. Always add the digital file
-        await wooAddToCart(WOO_DIGITAL_ID);
+      // Build checkout URL — mu-plugin handles cart loading server-side
+      let url = WOO_BASE_URL + '/checkout/?pawtrait_add=' + WOO_DIGITAL_ID;
 
-        // 2. Add print variation if selected
-        if (selectedPrint) {
-          const varMap = selectedPrint.type === 'framed' ? WOO_FRAMED_VARIATION_IDS : WOO_CANVAS_VARIATION_IDS;
-          const variationId = varMap[selectedPrint.size];
-          if (variationId) await wooAddToCart(variationId);
-        }
-
-        // 3. Redirect to checkout
-        window.location.href = WOO_BASE_URL + '/checkout';
-
-      } catch (err) {
-        console.error('WooCommerce cart error:', err);
-        if (btn) { btn.disabled = false; btn.innerHTML = originalHTML; }
-        const toast = document.getElementById('cart-toast');
-        toast.textContent = 'Something went wrong — please try again.';
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 4000);
+      if (selectedPrint) {
+        const varMap = selectedPrint.type === 'framed' ? WOO_FRAMED_VARIATION_IDS : WOO_CANVAS_VARIATION_IDS;
+        const variationId = varMap[selectedPrint.size];
+        if (variationId) url += '&pawtrait_print=' + variationId;
       }
-    }
 
-    async function wooAddToCart(productId) {
-      // Nonce injected by PHP (wp_create_nonce) — see pawtrait-landing.php
-      const nonce = window.wcStoreApiNonce || window.wcSettings?.storeApiNonce || '';
-      const resp = await fetch(WOO_BASE_URL + '/wp-json/wc/store/v1/cart/add-item', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Nonce': nonce,
-        },
-        credentials: 'include',
-        body: JSON.stringify({ id: productId, quantity: 1 }),
-      });
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({}));
-        throw new Error(err.message || `Store API error ${resp.status} on item ${productId}`);
-      }
-      return resp.json();
+      window.location.href = url;
     }
   </script>
 

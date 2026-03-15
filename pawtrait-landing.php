@@ -8,33 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 // Tell LiteSpeed not to cache this page (nonce + cart state are per-visitor)
 do_action( 'litespeed_control_set_nocache', 'pawtrait landing page' );
 
-// ── Handle add-to-cart form POST ──────────────────────────────────────────
-add_action( 'template_redirect', function() {
-    if ( $_SERVER['REQUEST_METHOD'] !== 'POST' || ! isset( $_POST['pawtrait_checkout'] ) ) return;
-
-    // Explicitly load WooCommerce cart + session (required in non-standard page contexts)
-    if ( function_exists( 'wc_load_cart' ) ) {
-        wc_load_cart();
-    }
-
-    if ( ! function_exists( 'WC' ) || ! WC()->cart ) return;
-
-    WC()->cart->empty_cart();
-    WC()->cart->add_to_cart( 4479 ); // digital file
-
-    $print_id = isset( $_POST['print_variation_id'] ) ? intval( $_POST['print_variation_id'] ) : 0;
-    if ( $print_id > 0 ) {
-        WC()->cart->add_to_cart( $print_id );
-    }
-
-    // Force-save session so it persists through the redirect
-    if ( WC()->session ) {
-        WC()->session->save_data();
-    }
-
-    wp_safe_redirect( wc_get_checkout_url() );
-    exit;
-}, 1 );
+// Cart handler is now in mu-plugin: pawtrait-cart-handler.php
 
 // Dequeue theme styles so they don't conflict with our inline styles
 add_action( 'wp_enqueue_scripts', function() {
@@ -1636,33 +1610,19 @@ add_action( 'wp_enqueue_scripts', function() {
         return;
       }
 
-      // Button loading state
       const btn = document.querySelector('[onclick="addToCartAndCheckout()"]');
       if (btn) { btn.disabled = true; btn.innerHTML = 'Redirecting to checkout…'; }
 
-      // Build a hidden form and POST to this same page.
-      // PHP handler at the top of the template adds items to WooCommerce cart
-      // and redirects to /checkout — no API, no nonces, no fetch.
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = window.location.href;
-
-      const flag = document.createElement('input');
-      flag.type = 'hidden'; flag.name = 'pawtrait_checkout'; flag.value = '1';
-      form.appendChild(flag);
+      // Build checkout URL — mu-plugin handles cart loading server-side
+      let url = WOO_BASE_URL + '/checkout/?pawtrait_add=' + WOO_DIGITAL_ID;
 
       if (selectedPrint) {
         const varMap = selectedPrint.type === 'framed' ? WOO_FRAMED_VARIATION_IDS : WOO_CANVAS_VARIATION_IDS;
         const variationId = varMap[selectedPrint.size];
-        if (variationId) {
-          const printInput = document.createElement('input');
-          printInput.type = 'hidden'; printInput.name = 'print_variation_id'; printInput.value = variationId;
-          form.appendChild(printInput);
-        }
+        if (variationId) url += '&pawtrait_print=' + variationId;
       }
 
-      document.body.appendChild(form);
-      form.submit();
+      window.location.href = url;
     }
   </script>
 
