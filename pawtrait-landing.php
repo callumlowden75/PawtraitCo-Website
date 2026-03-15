@@ -1634,15 +1634,20 @@ add_action( 'wp_enqueue_scripts', function() {
     }
 
     async function wooAddToCart(productId) {
+      // WooCommerce Store API requires a nonce injected by wp_head() via wc-settings
+      const nonce = window.wcSettings?.storeApiNonce || '';
       const resp = await fetch(WOO_BASE_URL + '/wp-json/wc/store/v1/cart/add-item', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Nonce': nonce,
+        },
         credentials: 'include',
         body: JSON.stringify({ id: productId, quantity: 1 }),
       });
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({}));
-        throw new Error(err.message || 'Failed to add item ' + productId);
+        throw new Error(err.message || `Store API error ${resp.status} on item ${productId}`);
       }
       return resp.json();
     }
