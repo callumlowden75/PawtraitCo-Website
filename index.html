@@ -1399,6 +1399,23 @@
       { size:'60×90 cm', listed:288, youPay:249 },
     ];
 
+    // ── WooCommerce product / variation IDs ──────────────
+    const WOO_BASE_URL = 'https://pawtraitco.com.au';
+    const WOO_DIGITAL_ID = 4479; // The Heist — Digital File ($39)
+    const WOO_FRAMED_VARIATION_IDS = {
+      '20×30 cm': 4481,
+      '30×45 cm': 4482,
+      '45×60 cm': 4483,
+      '50×70 cm': 4484,
+      '60×90 cm': 4485,
+    };
+    const WOO_CANVAS_VARIATION_IDS = {
+      '20×30 cm': 4487,
+      '45×60 cm': 4488,
+      '50×70 cm': 4489,
+      '60×90 cm': 4490,
+    };
+
     function renderUpsellRows(type) {
       const items = type === 'framed' ? UPSELL_FRAMED : UPSELL_CANVAS;
       return items.map((item, i) => {
@@ -1563,19 +1580,53 @@
       updateOrderSummary();
     }
 
-    function addToCartAndCheckout() {
+    async function addToCartAndCheckout() {
       if (!uploadedFile) {
         document.getElementById('upload').scrollIntoView({ behavior: 'smooth' });
         return;
       }
-      // In production this would POST to WooCommerce API.
-      // For now, show a toast confirmation.
-      const toast = document.getElementById('cart-toast');
-      let msg = '✓ Digital Poster ($39)';
-      if (selectedPrint) msg += ' + ' + (selectedPrint.type === 'framed' ? 'Framed' : 'Canvas') + ' ' + selectedPrint.size;
-      toast.textContent = msg + ' — Redirecting to checkout…';
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 4000);
+
+      // Button loading state
+      const btn = document.querySelector('[onclick="addToCartAndCheckout()"]');
+      const originalHTML = btn ? btn.innerHTML : '';
+      if (btn) { btn.disabled = true; btn.innerHTML = 'Adding to cart…'; }
+
+      try {
+        // 1. Always add the digital file
+        await wooAddToCart(WOO_DIGITAL_ID);
+
+        // 2. Add print variation if selected
+        if (selectedPrint) {
+          const varMap = selectedPrint.type === 'framed' ? WOO_FRAMED_VARIATION_IDS : WOO_CANVAS_VARIATION_IDS;
+          const variationId = varMap[selectedPrint.size];
+          if (variationId) await wooAddToCart(variationId);
+        }
+
+        // 3. Redirect to checkout
+        window.location.href = WOO_BASE_URL + '/checkout';
+
+      } catch (err) {
+        console.error('WooCommerce cart error:', err);
+        if (btn) { btn.disabled = false; btn.innerHTML = originalHTML; }
+        const toast = document.getElementById('cart-toast');
+        toast.textContent = 'Something went wrong — please try again.';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 4000);
+      }
+    }
+
+    async function wooAddToCart(productId) {
+      const resp = await fetch(WOO_BASE_URL + '/wp-json/wc/store/v1/cart/add-item', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ id: productId, quantity: 1 }),
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.message || 'Failed to add item ' + productId);
+      }
+      return resp.json();
     }
   </script>
 
