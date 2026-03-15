@@ -8,21 +8,33 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 // Tell LiteSpeed not to cache this page (nonce + cart state are per-visitor)
 do_action( 'litespeed_control_set_nocache', 'pawtrait landing page' );
 
-// ── Handle add-to-cart form POST (no API, no nonce, just server-side cart) ──
-if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['pawtrait_checkout'] ) ) {
-    if ( function_exists( 'WC' ) && WC()->cart ) {
-        WC()->cart->empty_cart();
-        // Always add the digital file
-        WC()->cart->add_to_cart( 4479 );
-        // Add print variation if one was selected
-        $print_id = isset( $_POST['print_variation_id'] ) ? intval( $_POST['print_variation_id'] ) : 0;
-        if ( $print_id > 0 ) {
-            WC()->cart->add_to_cart( $print_id );
-        }
-        wp_safe_redirect( wc_get_checkout_url() );
-        exit;
+// ── Handle add-to-cart form POST ──────────────────────────────────────────
+add_action( 'template_redirect', function() {
+    if ( $_SERVER['REQUEST_METHOD'] !== 'POST' || ! isset( $_POST['pawtrait_checkout'] ) ) return;
+
+    // Explicitly load WooCommerce cart + session (required in non-standard page contexts)
+    if ( function_exists( 'wc_load_cart' ) ) {
+        wc_load_cart();
     }
-}
+
+    if ( ! function_exists( 'WC' ) || ! WC()->cart ) return;
+
+    WC()->cart->empty_cart();
+    WC()->cart->add_to_cart( 4479 ); // digital file
+
+    $print_id = isset( $_POST['print_variation_id'] ) ? intval( $_POST['print_variation_id'] ) : 0;
+    if ( $print_id > 0 ) {
+        WC()->cart->add_to_cart( $print_id );
+    }
+
+    // Force-save session so it persists through the redirect
+    if ( WC()->session ) {
+        WC()->session->save_data();
+    }
+
+    wp_safe_redirect( wc_get_checkout_url() );
+    exit;
+}, 1 );
 
 // Dequeue theme styles so they don't conflict with our inline styles
 add_action( 'wp_enqueue_scripts', function() {
