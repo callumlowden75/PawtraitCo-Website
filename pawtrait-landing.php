@@ -1635,8 +1635,8 @@ add_action( 'wp_enqueue_scripts', function() {
     }
 
     async function wooAddToCart(productId) {
-      // WooCommerce Store API requires a nonce injected by wp_head() via wc-settings
-      const nonce = window.wcSettings?.storeApiNonce || '';
+      // Nonce injected by PHP (wp_create_nonce) — see <head>
+      const nonce = window.wcStoreApiNonce || window.wcSettings?.storeApiNonce || '';
       const resp = await fetch(WOO_BASE_URL + '/wp-json/wc/store/v1/cart/add-item', {
         method: 'POST',
         headers: {
