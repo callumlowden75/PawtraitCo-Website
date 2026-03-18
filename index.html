@@ -637,6 +637,43 @@
 
 
   <!-- ═══════════════════════════════════════════════════ -->
+  <!-- BEFORE / AFTER SLIDER -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="bg-section-mid" style="padding:64px 24px;">
+    <div style="max-width:700px; margin:0 auto;">
+
+      <div class="reveal" style="text-align:center; margin-bottom:36px;">
+        <h2 style="font-family:'Playfair Display',serif; font-size:clamp(1.8rem,5vw,2.6rem); font-weight:600; color:#F5F2EC; letter-spacing:-0.02em; line-height:1.2; margin:0 0 10px;">
+          From photo to <em style="color:#C9983C;">masterpiece</em>
+        </h2>
+        <p style="font-family:'DM Sans',sans-serif; font-size:0.9rem; color:rgba(245,242,236,0.65); line-height:1.65; max-width:420px; margin:0 auto;">
+          Upload any photo of your pet — we'll transform it into a cinematic portrait.
+        </p>
+      </div>
+
+      <!-- Slider container -->
+      <div class="reveal" id="ba-slider" style="position:relative; width:100%; max-width:560px; margin:0 auto; aspect-ratio:3/4; border-radius:16px; overflow:hidden; cursor:ew-resize; user-select:none; -webkit-user-select:none; box-shadow:0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,152,60,0.2);">
+        <!-- After (portrait) — full background -->
+        <img id="ba-after" src="Assets/Gemini_Generated_Image_41w1ix41w1ix41w1.png" alt="After — cinematic pet portrait" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;" draggable="false" />
+        <!-- Before (original photo) — clipped via clip-path, no wrapper needed -->
+        <img id="ba-before" src="Assets/frenchie-before.png" alt="Before — original pet photo" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 35%; clip-path:inset(0 50% 0 0);" draggable="false" />
+        <!-- Slider handle -->
+        <div id="ba-handle" style="position:absolute; top:0; bottom:0; left:50%; width:4px; background:#DFB86A; transform:translateX(-50%); z-index:10; pointer-events:none;">
+          <!-- Circle grip -->
+          <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:44px; height:44px; border-radius:50%; background:#DFB86A; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 12px rgba(0,0,0,0.4);">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4L3 10L7 16" stroke="#0E0E12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 4L17 10L13 16" stroke="#0E0E12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <!-- Labels -->
+        <span style="position:absolute; bottom:14px; left:14px; font-family:'DM Sans',sans-serif; font-size:0.7rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#fff; background:rgba(0,0,0,0.55); padding:5px 10px; border-radius:6px; z-index:5; pointer-events:none;">Before</span>
+        <span style="position:absolute; bottom:14px; right:14px; font-family:'DM Sans',sans-serif; font-size:0.7rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#DFB86A; background:rgba(0,0,0,0.55); padding:5px 10px; border-radius:6px; z-index:5; pointer-events:none;">After</span>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════ -->
   <!-- TESTIMONIALS SECTION — positioned for social proof before action -->
   <!-- ═══════════════════════════════════════════════════ -->
   <section style="padding:56px 24px; background:#2C1A0A; border-top:1px solid rgba(201,152,60,0.16);">
@@ -1600,6 +1637,46 @@
 
       window.location.href = url;
     }
+
+    /* ── Before / After slider ───────────────────────── */
+    (function() {
+      const slider = document.getElementById('ba-slider');
+      if (!slider) return;
+      const handle    = document.getElementById('ba-handle');
+      const beforeImg = document.getElementById('ba-before');
+      let dragging = false;
+
+      function setPosition(x) {
+        const rect = slider.getBoundingClientRect();
+        let pct = ((x - rect.left) / rect.width) * 100;
+        pct = Math.max(2, Math.min(98, pct));
+        beforeImg.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
+        handle.style.left = pct + '%';
+      }
+
+      function onStart(e) {
+        e.preventDefault();
+        dragging = true;
+        slider.style.cursor = 'grabbing';
+      }
+      function onMove(e) {
+        if (!dragging) return;
+        const x = e.touches ? e.touches[0].clientX : e.clientX;
+        setPosition(x);
+      }
+      function onEnd() {
+        dragging = false;
+        slider.style.cursor = 'ew-resize';
+      }
+
+      slider.addEventListener('mousedown', onStart);
+      slider.addEventListener('touchstart', onStart, { passive: false });
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('touchmove', onMove, { passive: true });
+      window.addEventListener('mouseup', onEnd);
+      window.addEventListener('touchend', onEnd);
+
+    })();
   </script>
 
   <!-- Sticky mobile bottom bar -->
