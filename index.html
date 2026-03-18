@@ -1464,10 +1464,10 @@
           onmouseout="if(!this.classList.contains('urow-active')){this.style.borderColor='rgba(201,152,60,0.2)';this.style.background='rgba(201,152,60,0.04)';this.style.transform='translateY(0)';}"
           onmousedown="this.style.transform='scale(0.99)'" onmouseup="this.style.transform='translateY(-1px)'">
           ${isBestValue ? `<span style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); font-family:'DM Sans',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; background:#C9983C; color:#0E0E12; padding:3px 14px; border-radius:50px; white-space:nowrap; z-index:2;">BEST VALUE</span>` : ''}
+          ${item.badge === 'Most Popular' ? `<span style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); font-family:'DM Sans',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; background:linear-gradient(135deg,rgba(201,152,60,0.25),rgba(201,152,60,0.15)); border:1px solid rgba(201,152,60,0.55); color:#DFB86A; padding:3px 14px; border-radius:50px; white-space:nowrap; z-index:2;">MOST POPULAR</span>` : ''}
           <div style="flex:1;">
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
               <span style="font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:600; color:#F5F2EC;">${item.size}</span>
-              ${item.badge === 'Most Popular' ? `<span style="font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:linear-gradient(135deg,rgba(201,152,60,0.25),rgba(201,152,60,0.15));border:1px solid rgba(201,152,60,0.55);color:#DFB86A;padding:3px 10px;border-radius:50px;">MOST POPULAR</span>` : ''}
             </div>
           </div>
           <div style="text-align:right; flex-shrink:0;">
@@ -1671,6 +1671,30 @@
       window.addEventListener('touchmove', onMove, { passive: true });
       window.addEventListener('mouseup', onEnd);
       window.addEventListener('touchend', onEnd);
+
+      // Wobble animation when slider scrolls into view
+      let wobbled = false;
+      function setPct(pct) {
+        beforeImg.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
+        handle.style.left = pct + '%';
+      }
+      function wobble() {
+        if (wobbled) return;
+        wobbled = true;
+        const keyframes = [50, 38, 62, 44, 56, 48, 52, 50];
+        let i = 0;
+        const step = () => {
+          if (i >= keyframes.length) return;
+          setPct(keyframes[i]);
+          i++;
+          requestAnimationFrame(() => setTimeout(step, 120));
+        };
+        setTimeout(step, 400);
+      }
+      const wobbleObs = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) { wobble(); wobbleObs.disconnect(); }
+      }, { threshold: 0.5 });
+      wobbleObs.observe(slider);
 
     })();
   </script>

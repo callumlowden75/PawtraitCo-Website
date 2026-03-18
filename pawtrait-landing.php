@@ -1451,10 +1451,10 @@ add_action( 'wp_enqueue_scripts', function() {
           onmouseout="if(!this.classList.contains('urow-active')){this.style.borderColor='rgba(201,152,60,0.2)';this.style.background='rgba(201,152,60,0.04)';this.style.transform='translateY(0)';}"
           onmousedown="this.style.transform='scale(0.99)'" onmouseup="this.style.transform='translateY(-1px)'">
           ${isBestValue ? `<span style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); font-family:'DM Sans',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; background:#C9983C; color:#0E0E12; padding:3px 14px; border-radius:50px; white-space:nowrap; z-index:2;">BEST VALUE</span>` : ''}
+          ${item.badge === 'Most Popular' ? `<span style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); font-family:'DM Sans',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; background:linear-gradient(135deg,rgba(201,152,60,0.25),rgba(201,152,60,0.15)); border:1px solid rgba(201,152,60,0.55); color:#DFB86A; padding:3px 14px; border-radius:50px; white-space:nowrap; z-index:2;">MOST POPULAR</span>` : ''}
           <div style="flex:1;">
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
               <span style="font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:600; color:#F5F2EC;">${item.size}</span>
-              ${item.badge === 'Most Popular' ? `<span style="font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:linear-gradient(135deg,rgba(201,152,60,0.25),rgba(201,152,60,0.15));border:1px solid rgba(201,152,60,0.55);color:#DFB86A;padding:3px 10px;border-radius:50px;">MOST POPULAR</span>` : ''}
             </div>
           </div>
           <div style="text-align:right; flex-shrink:0;">
