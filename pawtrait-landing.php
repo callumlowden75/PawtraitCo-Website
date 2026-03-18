@@ -1443,27 +1443,23 @@ add_action( 'wp_enqueue_scripts', function() {
     function renderUpsellRows(type) {
       const items = type === 'framed' ? UPSELL_FRAMED : UPSELL_CANVAS;
       return items.map((item, i) => {
-        const isMostPopular = item.badge === 'Most Popular';
-        const borderColor = isMostPopular ? 'rgba(201,152,60,0.5)' : 'rgba(201,152,60,0.2)';
-        const bgColor = isMostPopular ? 'rgba(201,152,60,0.1)' : 'rgba(201,152,60,0.04)';
-        const extraShadow = isMostPopular ? 'box-shadow:0 0 20px rgba(201,152,60,0.08);' : '';
-        const scale = isMostPopular ? 'transform:scale(1.02);' : '';
+        const isBestValue = item.badge === 'Best Value';
         return `
         <div class="upsell-row" id="urow-${type}-${i}" onclick="selectPrint('${type}',${i})"
-          style="display:flex; align-items:center; justify-content:space-between; padding:${isMostPopular ? '16px 18px' : '14px 16px'}; border-radius:12px; border:1.5px solid ${borderColor}; background:${bgColor}; cursor:pointer; gap:12px; touch-action:manipulation; transition:border-color 0.2s ease, background 0.2s ease, transform 0.15s ease; ${extraShadow} ${scale}"
-          onmouseover="if(!this.classList.contains('urow-active')){this.style.borderColor='rgba(201,152,60,0.5)';this.style.background='rgba(201,152,60,0.1)';this.style.transform='translateY(-1px)${isMostPopular ? ' scale(1.02)' : ''}';}"
-          onmouseout="if(!this.classList.contains('urow-active')){this.style.borderColor='${borderColor}';this.style.background='${bgColor}';this.style.transform='${isMostPopular ? 'scale(1.02)' : 'translateY(0)'}';}"
+          style="position:relative; display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-radius:12px; border:1.5px solid rgba(201,152,60,0.2); background:rgba(201,152,60,0.04); cursor:pointer; gap:12px; touch-action:manipulation; transition:border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;"
+          onmouseover="if(!this.classList.contains('urow-active')){this.style.borderColor='rgba(201,152,60,0.5)';this.style.background='rgba(201,152,60,0.1)';this.style.transform='translateY(-1px)';}"
+          onmouseout="if(!this.classList.contains('urow-active')){this.style.borderColor='rgba(201,152,60,0.2)';this.style.background='rgba(201,152,60,0.04)';this.style.transform='translateY(0)';}"
           onmousedown="this.style.transform='scale(0.99)'" onmouseup="this.style.transform='translateY(-1px)'">
+          ${isBestValue ? `<span style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); font-family:'DM Sans',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; background:#C9983C; color:#0E0E12; padding:3px 14px; border-radius:50px; white-space:nowrap; z-index:2;">BEST VALUE</span>` : ''}
           <div style="flex:1;">
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-              <span style="font-family:'DM Sans',sans-serif; font-size:${isMostPopular ? '0.92rem' : '0.88rem'}; font-weight:600; color:#F5F2EC;">${item.size}</span>
-              ${isMostPopular ? `<span style="font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:linear-gradient(135deg,rgba(201,152,60,0.25),rgba(201,152,60,0.15));border:1px solid rgba(201,152,60,0.55);color:#DFB86A;padding:3px 10px;border-radius:50px;">MOST POPULAR</span>` : ''}
-              ${item.badge === 'Best Value' ? `<span style="font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);color:#4ade80;padding:2px 8px;border-radius:50px;">${item.badge}</span>` : ''}
+              <span style="font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:600; color:#F5F2EC;">${item.size}</span>
+              ${item.badge === 'Most Popular' ? `<span style="font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:linear-gradient(135deg,rgba(201,152,60,0.25),rgba(201,152,60,0.15));border:1px solid rgba(201,152,60,0.55);color:#DFB86A;padding:3px 10px;border-radius:50px;">MOST POPULAR</span>` : ''}
             </div>
           </div>
           <div style="text-align:right; flex-shrink:0;">
             <div style="font-family:'DM Sans',sans-serif; font-size:0.75rem; color:rgba(245,242,236,0.5); text-decoration:line-through; margin-bottom:2px;">$${item.youPay + 39}</div>
-            <div style="font-family:'Bebas Neue',sans-serif; font-size:${isMostPopular ? '1.6rem' : '1.4rem'}; color:#DFB86A; line-height:1; letter-spacing:0.04em;">$${item.youPay}</div>
+            <div style="font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:#DFB86A; line-height:1; letter-spacing:0.04em;">$${item.youPay}</div>
           </div>
         </div>
       `}).join('');
